@@ -6,9 +6,10 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 
-public abstract class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
 	private final List<StrategyItem<? extends VH>> mItems = new ArrayList<>();
 	private final List<Class<? extends StrategyItem>> mViewTypes = new ArrayList<>();
@@ -140,14 +141,37 @@ public abstract class StrategyAdapter<VH extends RecyclerView.ViewHolder> extend
 
 
 	public void updateType(StrategyItem<? extends VH> item, Class<? extends StrategyItem> type) {
-		removeType(type);
+//		removeType(type);
+		List<Range> removedItems = performRemoveType(type);
 		add(item);
 	}
 
 
 	public void updateType(List<? extends StrategyItem<? extends VH>> item, Class<? extends StrategyItem> type) {
-		removeType(type);
-		addAll(item);
+		List<Range> removedItems = performRemoveType(type);
+		Range addedItemsRange = performAdd(item);
+
+		Set<Range> conjuctions = RangeUtils.findConjuctions(removedItems, addedItemsRange);
+
+		List<Integer> notifiedItems = new ArrayList<>();
+
+		for (int i = addedItemsRange.from; i <= addedItemsRange.to; i++) {
+			if (RangeUtils.rangesContain(conjuctions, i)) {
+				notifyItemChanged(i);
+			} else {
+				notifyItemInserted(i);
+			}
+
+			notifiedItems.add(i);
+		}
+
+		for (Range range : removedItems) {
+			for (int i = range.from; i <= range.to; i++) {
+				if (!notifiedItems.contains(i)) {
+					notifyItemRemoved(i);
+				}
+			}
+		}
 	}
 
 
@@ -171,6 +195,23 @@ public abstract class StrategyAdapter<VH extends RecyclerView.ViewHolder> extend
 	// ----- Convenience -----
 
 
+	public int getItemCountForType(Class<? extends StrategyItem> type) {
+		int count = 0;
+		for (int i = 0; i < getItemCount(); i++) {
+			if (get(i).getClass() == type) count ++;
+		}
+		return count;
+	}
+
+
+	public <T extends StrategyItem<? extends VH>> List<T> getAllItemsForType(Class<T> type) {
+		List<T> result = new ArrayList<>();
+		for (int i = 0; i < getItemCount(); i++) {
+			if (get(i).getClass() == type) result.add(get(i));
+		}
+	}
+
+
 	public boolean isEmpty() {
 		return mItems.isEmpty();
 	}
@@ -189,5 +230,12 @@ public abstract class StrategyAdapter<VH extends RecyclerView.ViewHolder> extend
 		}
 
 		return RangeUtils.groupIntsToRanges(removedItemIndicies);
+	}
+
+
+	private Range performAdd(List<? extends StrategyItem<? extends VH>> items) {
+		int from = mItems.size();
+		mItems.addAll(items);
+		return new Range(from, mItems.size() - 1);
 	}
 }
