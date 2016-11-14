@@ -1,6 +1,8 @@
 package com.artufimtcev.sadapter;
 
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -11,27 +13,27 @@ import java.util.Set;
 
 public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
-	private final List<StrategyItem<? extends VH>> mItems = new ArrayList<>();
-	private final List<Class<? extends StrategyItem>> mViewTypes = new ArrayList<>();
+	private final List<AdapterItem<? extends VH>> mItems = new ArrayList<>();
+	private final List<Class<? extends AdapterItem>> mViewTypes = new ArrayList<>();
 
 	// ----- Delegate adapter work to StrategyItems -----
 
 
 	@Override
 	public void onBindViewHolder(VH holder, int position) {
-		// Delegate binding of the ViewHolder to the corresponding StrategyItem
-		((StrategyItem<VH>) mItems.get(position)).onBindViewHolder(holder);
+		// Delegate binding of the ViewHolder to the corresponding AdapterItem
+		((AdapterItem<VH>) mItems.get(position)).onBindViewHolder(holder);
 	}
 
 
 	@Override
 	public int getItemViewType(int position) {
-		Class<? extends StrategyItem> viewTypeClass = mItems.get(position).getClass();
+		Class<? extends AdapterItem> viewTypeClass = mItems.get(position).getClass();
 		if (!mViewTypes.contains(viewTypeClass)) {
 			mViewTypes.add(viewTypeClass);
 		}
 
-		// Use index of StrategyItem's Class object in mViewTypes list as int that represents
+		// Use index of AdapterItem's Class object in mViewTypes list as int that represents
 		// this view type as int for RecyclerView.Adapter
 		return mViewTypes.indexOf(viewTypeClass);
 	}
@@ -53,13 +55,13 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 	// ----- Retrieving items -----
 
 
-	public StrategyItem<? extends VH> get(int index) {
+	public AdapterItem<? extends VH> get(int index) {
 		return mItems.get(index);
 	}
 
 
-	public <T extends StrategyItem<? extends VH>> T findItem(Class<T> clazz) {
-		for (StrategyItem<? extends VH> strategyItem : mItems) {
+	public <T extends AdapterItem<? extends VH>> T findItem(Class<T> clazz) {
+		for (AdapterItem<? extends VH> strategyItem : mItems) {
 			if (strategyItem.getClass() == clazz) {
 				//noinspection unchecked
 				return (T) strategyItem;
@@ -73,19 +75,19 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 	// ----- Adding items -----
 
 
-	public void add(StrategyItem<? extends VH> item) {
+	public void add(AdapterItem<? extends VH> item) {
 		mItems.add(item);
 		notifyItemInserted(mItems.size() - 1);
 	}
 
 
-	public void add(int index, StrategyItem<? extends VH> item) {
+	public void add(int index, AdapterItem<? extends VH> item) {
 		mItems.add(index, item);
 		notifyItemInserted(index);
 	}
 
 
-	public void addAll(Collection<? extends StrategyItem<? extends VH>> items) {
+	public void addAll(Collection<? extends AdapterItem<? extends VH>> items) {
 		int start = mItems.size();
 		mItems.addAll(items);
 		notifyItemRangeInserted(start, items.size());
@@ -95,7 +97,7 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 	// ----- Removing items -----
 
 
-	public void remove(StrategyItem<? extends VH> item) {
+	public void remove(AdapterItem<? extends VH> item) {
 		int index = indexOf(item);
 		if (index < 0) return;
 		mItems.remove(item);
@@ -109,9 +111,10 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 	}
 
 
-	public void removeType(Class<? extends StrategyItem> type) {
-		List<Range> removedItemsRange = performRemoveType(type);
-		AdapterUtils.notifyItemRangeRemoved(this, removedItemsRange);
+	public void removeType(Class<? extends AdapterItem> type) {
+		List<AdapterItem<? extends VH>> itemsListSnapshot = this.getItemsSnapshot();
+		this.performRemoveType(type);
+		DiffUtil.calculateDiff(new AdapterItemCallback<>(itemsListSnapshot, mItems), false).dispatchUpdatesTo(this);
 	}
 
 
@@ -129,61 +132,48 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 	// ----- Updating items -----
 
 
-	public void set(int index, StrategyItem<? extends VH> item) {
+	public void set(int index, AdapterItem<? extends VH> item) {
 		mItems.set(index, item);
 		notifyItemChanged(index);
 	}
 
 
-	public void update(StrategyItem<? extends VH> item) {
+	public void update(AdapterItem<? extends VH> item) {
 		updateType(item, item.getClass());
 	}
 
 
-	public void updateType(StrategyItem<? extends VH> item, Class<? extends StrategyItem> type) {
-//		removeType(type);
-		List<Range> removedItems = performRemoveType(type);
-		add(item);
+	public void updateType(AdapterItem<? extends VH> item, Class<? extends AdapterItem> type) {
+		List<AdapterItem<? extends VH>> itemsListSnapshot = this.getItemsSnapshot();
+
+		this.performRemoveType(type);
+		this.performAdd(item);
+
+		DiffUtil.calculateDiff(new AdapterItemCallback<>(itemsListSnapshot, mItems), false).dispatchUpdatesTo(this);
 	}
 
 
-	public void updateType(List<? extends StrategyItem<? extends VH>> item, Class<? extends StrategyItem> type) {
-		List<Range> removedItems = performRemoveType(type);
-		Range addedItemsRange = performAdd(item);
+	public void updateType(List<? extends AdapterItem<? extends VH>> items, Class<? extends AdapterItem> type) {
+		List<AdapterItem<? extends VH>> itemsListSnapshot = this.getItemsSnapshot();
 
-		Set<Range> conjuctions = RangeUtils.findConjuctions(removedItems, addedItemsRange);
+		this.performRemoveType(type);
+		this.performAdd(items);
 
-		List<Integer> notifiedItems = new ArrayList<>();
-
-		for (int i = addedItemsRange.from; i <= addedItemsRange.to; i++) {
-			if (RangeUtils.rangesContain(conjuctions, i)) {
-				notifyItemChanged(i);
-			} else {
-				notifyItemInserted(i);
-			}
-
-			notifiedItems.add(i);
-		}
-
-		for (Range range : removedItems) {
-			for (int i = range.from; i <= range.to; i++) {
-				if (!notifiedItems.contains(i)) {
-					notifyItemRemoved(i);
-				}
-			}
-		}
+		long start = System.currentTimeMillis();
+		DiffUtil.calculateDiff(new AdapterItemCallback<>(itemsListSnapshot, mItems), false).dispatchUpdatesTo(this);
+		Log.d("TEST", "Processing adapter items took " + (System.currentTimeMillis() - start) + " millis");
 	}
 
 
 	// ----- Calculating indices -----
 
 
-	public int indexOf(StrategyItem<? extends VH> item) {
+	public int indexOf(AdapterItem<? extends VH> item) {
 		return mItems.indexOf(item);
 	}
 
 
-	public int indexOf(Class<? extends StrategyItem> type) {
+	public int indexOf(Class<? extends AdapterItem> type) {
 		for (int i = 0; i < mItems.size(); i++) {
 			if (mItems.get(i).getClass() == type) return i;
 		}
@@ -195,7 +185,7 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 	// ----- Convenience -----
 
 
-	public int getItemCountForType(Class<? extends StrategyItem> type) {
+	public int getItemCountForType(Class<? extends AdapterItem> type) {
 		int count = 0;
 		for (int i = 0; i < getItemCount(); i++) {
 			if (get(i).getClass() == type) count ++;
@@ -204,11 +194,15 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 	}
 
 
-	public <T extends StrategyItem<? extends VH>> List<T> getAllItemsForType(Class<T> type) {
+	public <T extends AdapterItem<? extends VH>> List<T> getAllItemsForType(Class<T> type) {
 		List<T> result = new ArrayList<>();
 		for (int i = 0; i < getItemCount(); i++) {
-			if (get(i).getClass() == type) result.add(get(i));
+			if (get(i).getClass() == type) {
+				//noinspection unchecked
+				result.add((T) get(i));
+			}
 		}
+		return result;
 	}
 
 
@@ -217,25 +211,30 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 	}
 
 
-	private List<Range> performRemoveType(Class<? extends StrategyItem> type) {
-		List<Integer> removedItemIndicies = new ArrayList<>();
-
+	private void performRemoveType(Class<? extends AdapterItem> type) {
 		for (int i = 0; i < mItems.size();) {
 			if (mItems.get(i).getClass() == type) {
 				mItems.remove(i);
-				removedItemIndicies.add(i);
 			} else {
 				i++;
 			}
 		}
-
-		return RangeUtils.groupIntsToRanges(removedItemIndicies);
 	}
 
 
-	private Range performAdd(List<? extends StrategyItem<? extends VH>> items) {
-		int from = mItems.size();
+	private void performAdd(AdapterItem<? extends VH> item) {
+		mItems.add(item);
+	}
+
+
+	private void performAdd(List<? extends AdapterItem<? extends VH>> items) {
 		mItems.addAll(items);
-		return new Range(from, mItems.size() - 1);
+	}
+
+
+	private List<AdapterItem<? extends VH>> getItemsSnapshot() {
+		List<AdapterItem<? extends VH>> snapshot = new ArrayList<>();
+		snapshot.addAll(mItems);
+		return snapshot;
 	}
 }

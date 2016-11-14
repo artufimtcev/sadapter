@@ -4,14 +4,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
 
 
-public class TextStrategyItem extends SelectableStrategyItem<TextStrategyItem.ViewHolder> {
+public class ButtonAdapterItem extends SelectableAdapterItem<ButtonAdapterItem.ViewHolder> {
 
 	private String data;
 
-	public TextStrategyItem(String data) {
+
+	public ButtonAdapterItem(String data) {
 		this.data = data;
 	}
 
@@ -24,18 +25,35 @@ public class TextStrategyItem extends SelectableStrategyItem<TextStrategyItem.Vi
 
 	@Override
 	public ViewHolder createViewHolder(ViewGroup parent) {
-		return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_text, parent, false));
+		return new ButtonAdapterItem.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_button, parent, false));
+	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null || getClass() != o.getClass()) return false;
+
+		ButtonAdapterItem that = (ButtonAdapterItem) o;
+
+		return data != null ? data.equals(that.data) : that.data == null;
+	}
+
+
+	@Override
+	public int hashCode() {
+		return data != null ? data.hashCode() : 0;
 	}
 
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
 
-		private TextView mTextView;
+		private Button mButton;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
 
-			mTextView = (TextView) itemView.findViewById(R.id.text);
+			mButton = (Button) itemView.findViewById(R.id.button);
 		}
 
 
@@ -49,8 +67,7 @@ public class TextStrategyItem extends SelectableStrategyItem<TextStrategyItem.Vi
 			}
 
 			itemView.setBackgroundColor(color);
-
-			mTextView.setText(text);
+			mButton.setText(text);
 		}
 	}
 }

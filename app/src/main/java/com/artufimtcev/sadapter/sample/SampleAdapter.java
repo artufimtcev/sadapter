@@ -1,12 +1,12 @@
 package com.artufimtcev.sadapter.sample;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
+import com.artufimtcev.sadapter.AdapterItem;
 import com.artufimtcev.sadapter.StrategyAdapter;
-import com.artufimtcev.sadapter.StrategyItem;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,13 +19,13 @@ public class SampleAdapter extends StrategyAdapter<RecyclerView.ViewHolder> {
 
 
 	public void updateTexts() {
-		List<TextStrategyItem> strategyItems = new ArrayList<>();
+		List<TextAdapterItem> strategyItems = new ArrayList<>();
 
 		for (int i = 0; i < 10; i++) {
-			strategyItems.add(new TextStrategyItem("New Huehue"));
+			strategyItems.add(new TextAdapterItem("New Huehue"));
 		}
 
-		updateType(strategyItems, TextStrategyItem.class);
+		updateType(strategyItems, TextAdapterItem.class);
 	}
 
 
@@ -33,15 +33,17 @@ public class SampleAdapter extends StrategyAdapter<RecyclerView.ViewHolder> {
 		int count = 30;
 		int textItemsCount = (int) (Math.random() * count);
 
-		List<StrategyItem<? extends RecyclerView.ViewHolder>> strategyItems = new ArrayList<>();
+		List<AdapterItem<? extends RecyclerView.ViewHolder>> strategyItems = new ArrayList<>();
 
 		for (int i = 0; i < count; i++) {
 			if (i < textItemsCount) {
-				strategyItems.add(new TextStrategyItem("Huehue"));
+				strategyItems.add(new TextAdapterItem("Huehue"));
 			} else {
-				strategyItems.add(new ButtonStrategyItem("Button"));
+				strategyItems.add(new ButtonAdapterItem("Button"));
 			}
 		}
+
+		Log.d("TEST", "Adding " + (count - textItemsCount) + " buttons and " + textItemsCount + " textviews");
 
 		Collections.shuffle(strategyItems);
 

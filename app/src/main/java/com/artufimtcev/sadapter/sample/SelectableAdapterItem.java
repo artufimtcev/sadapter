@@ -2,10 +2,10 @@ package com.artufimtcev.sadapter.sample;
 
 import android.support.v7.widget.RecyclerView;
 
-import com.artufimtcev.sadapter.StrategyItem;
+import com.artufimtcev.sadapter.AdapterItem;
 
 
-public abstract class SelectableStrategyItem<VH extends RecyclerView.ViewHolder> implements StrategyItem<VH> {
+public abstract class SelectableAdapterItem<VH extends RecyclerView.ViewHolder> extends AdapterItem<VH> {
 
 	private boolean selected;
 
