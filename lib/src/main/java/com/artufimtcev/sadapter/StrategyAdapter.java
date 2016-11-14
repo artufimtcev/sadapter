@@ -149,7 +149,9 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 		this.performRemoveType(type);
 		this.performAdd(item);
 
+		long start = System.currentTimeMillis();
 		DiffUtil.calculateDiff(new AdapterItemCallback<>(itemsListSnapshot, mItems), false).dispatchUpdatesTo(this);
+		Log.d("TEST", "Processing adapter items took " + (System.currentTimeMillis() - start) + " millis");
 	}
 
 
