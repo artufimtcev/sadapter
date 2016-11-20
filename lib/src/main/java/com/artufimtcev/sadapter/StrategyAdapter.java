@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 
 public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
@@ -164,6 +163,27 @@ public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends Recycle
 		long start = System.currentTimeMillis();
 		DiffUtil.calculateDiff(new AdapterItemCallback<>(itemsListSnapshot, mItems), false).dispatchUpdatesTo(this);
 		Log.d("TEST", "Processing adapter items took " + (System.currentTimeMillis() - start) + " millis");
+	}
+
+
+	public void updateAll(List<AdapterItem<? extends VH>> items) {
+		// Create items snapshot
+		List<AdapterItem<? extends VH>> oldListCopy = getItemsSnapshot();
+
+		mItems.clear();
+		mItems.addAll(items);
+
+		DiffUtil.calculateDiff(new AdapterItemCallback<>(oldListCopy, mItems)).dispatchUpdatesTo(this);
+	}
+
+
+	// ----- Replace items -----
+
+
+	public void replaceAll(List<? extends AdapterItem<? extends VH>> items) {
+		mItems.clear();
+		mItems.addAll(items);
+		notifyDataSetChanged();
 	}
 
 
