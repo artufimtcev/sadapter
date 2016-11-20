@@ -30,12 +30,16 @@ public class AdapterItemCallback<VH extends RecyclerView.ViewHolder> extends Dif
 
 	@Override
 	public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-		return listBeforeChange.get(oldItemPosition).isSimilarTo(listAfterChange.get(newItemPosition));
+		return listBeforeChange.get(oldItemPosition).hasSameDataAs(listAfterChange.get(newItemPosition));
 	}
 
 
 	@Override
 	public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-		return listBeforeChange.get(oldItemPosition).equals(listAfterChange.get(newItemPosition));
+		// This method is called only when areItemsTheSame(int, int) returns true for the same indices, which means
+		// those items has the same data. For items that have their appearance dependent on it's data only, we leave
+		// a possibility for small optimization by not calling equality check method again.
+		return !listBeforeChange.get(oldItemPosition).hasDifferentAppearances() ||
+				listBeforeChange.get(oldItemPosition).hasSameAppearanceAs(listAfterChange.get(newItemPosition));
 	}
 }
