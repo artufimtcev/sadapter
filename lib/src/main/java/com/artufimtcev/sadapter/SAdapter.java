@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class StrategyAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
 	private final List<AdapterItem<? extends VH>> mItems = new ArrayList<>();
 	private final List<Class<? extends AdapterItem>> mViewTypes = new ArrayList<>();

@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.artufimtcev.sadapter.AdapterItem;
+
 
 public class TextAdapterItem extends SelectableAdapterItem<TextAdapterItem.ViewHolder> {
 
@@ -29,20 +31,13 @@ public class TextAdapterItem extends SelectableAdapterItem<TextAdapterItem.ViewH
 
 
 	@Override
-	public boolean equals(Object o) {
-		if(this == o) return true;
-		if(o == null || getClass() != o.getClass()) return false;
+	public boolean hasSameDataAs(AdapterItem<? extends RecyclerView.ViewHolder> item) {
+		if(this == item) return true;
+		if(item == null || getClass() != item.getClass()) return false;
 
-		TextAdapterItem that = (TextAdapterItem) o;
+		TextAdapterItem that = (TextAdapterItem) item;
 
 		return data != null ? data.equals(that.data) : that.data == null;
-
-	}
-
-
-	@Override
-	public int hashCode() {
-		return data != null ? data.hashCode() : 0;
 	}
 
 
