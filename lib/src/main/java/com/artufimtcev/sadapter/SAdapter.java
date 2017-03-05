@@ -7,10 +7,11 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 
-public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> implements Iterable<AdapterItem<? extends VH>> {
 
 	private final List<AdapterItem<? extends VH>> mItems = new ArrayList<>();
 	private final List<Class<? extends AdapterItem>> mViewTypes = new ArrayList<>();
@@ -41,13 +42,27 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	@Override
 	public VH onCreateViewHolder(ViewGroup parent, int viewType) {
 		// Use any of StrategyItems of this type to generate new ViewHolder
-		return (VH) findItem(mViewTypes.get(viewType)).createViewHolder(parent);
+		return (VH) findFirst(mViewTypes.get(viewType)).createViewHolder(parent);
 	}
 
 
 	@Override
 	public int getItemCount() {
 		return mItems.size();
+	}
+
+
+	/**
+	 * Returns an iterator of all items in this adapter.
+	 * <P>
+	 * NOTE: Method returns a list iterator wrapped into a {@link ReadIterator}, meaning that calling remove() method
+	 * on the iterator will throw an {@link UnsupportedOperationException}.
+	 *
+	 * @return ReadIterator for this adapter.
+	 */
+	@Override
+	public Iterator<AdapterItem<? extends VH>> iterator() {
+		return new ReadIterator<>(mItems.iterator());
 	}
 
 
@@ -59,7 +74,7 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	}
 
 
-	public <T extends AdapterItem<? extends VH>> T findItem(Class<T> clazz) {
+	public <T extends AdapterItem<? extends VH>> T findFirst(Class<T> clazz) {
 		for (AdapterItem<? extends VH> strategyItem : mItems) {
 			if (strategyItem.getClass() == clazz) {
 				//noinspection unchecked
@@ -68,6 +83,20 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 		}
 
 		return null;
+	}
+
+
+	public <T extends AdapterItem<? extends VH>> List<T> findAll(Class<T> clazz) {
+		List<T> result = new ArrayList<>();
+
+		for (AdapterItem<? extends VH> strategyItem : mItems) {
+			if (strategyItem.getClass() == clazz) {
+				//noinspection unchecked
+				result.add((T) strategyItem);
+			}
+		}
+
+		return result;
 	}
 
 
