@@ -1,8 +1,16 @@
 apply plugin: 'com.android.library'
 
+ext {
+	PUBLISH_GROUP_ID = 'com.artufimtcev'
+	PUBLISH_ARTIFACT_ID = 'sadapter'
+	PUBLISH_VERSION = '0.1.0'
+}
+
+apply from: '../release.gradle'
+
 android {
 	compileSdkVersion 24
-	buildToolsVersion "23.0.3"
+	buildToolsVersion '25.0.0'
 
 	defaultConfig {
 		minSdkVersion 15
