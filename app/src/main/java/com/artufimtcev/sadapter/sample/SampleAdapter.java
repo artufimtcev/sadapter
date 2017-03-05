@@ -14,39 +14,19 @@ import java.util.List;
 public class SampleAdapter extends SAdapter<RecyclerView.ViewHolder> {
 
 	public SampleAdapter() {
-		init();
+	}
+
+	public void addText(String text) {
+		this.add(new TextAdapterItem(text));
 	}
 
 
-	public void updateTexts() {
-		List<TextAdapterItem> strategyItems = new ArrayList<>();
-
-		for (int i = 0; i < 10; i++) {
-			strategyItems.add(new TextAdapterItem("New Huehue"));
-		}
-
-		updateType(strategyItems, TextAdapterItem.class);
+	public void addButton(String text) {
+		this.add(new ButtonAdapterItem(text));
 	}
 
 
-	private void init() {
-		int count = 30;
-		int textItemsCount = (int) (Math.random() * count);
-
-		List<AdapterItem<? extends RecyclerView.ViewHolder>> strategyItems = new ArrayList<>();
-
-		for (int i = 0; i < count; i++) {
-			if (i < textItemsCount) {
-				strategyItems.add(new TextAdapterItem("Huehue"));
-			} else {
-				strategyItems.add(new ButtonAdapterItem("Button"));
-			}
-		}
-
-		Log.d("TEST", "Adding " + (count - textItemsCount) + " buttons and " + textItemsCount + " textviews");
-
-		Collections.shuffle(strategyItems);
-
-		addAll(strategyItems);
+	public void addImage() {
+		this.add(new ImageViewItem());
 	}
 }

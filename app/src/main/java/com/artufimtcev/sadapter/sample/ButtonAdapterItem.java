@@ -20,9 +20,7 @@ public class ButtonAdapterItem extends SelectableAdapterItem<ButtonAdapterItem.V
 
 
 	@Override
-	public void onBindViewHolder(ViewHolder holder) {
-		holder.bind(isSelected(), data);
-	}
+	public void onBindViewHolder(ViewHolder holder) {}
 
 
 	@Override
@@ -49,20 +47,6 @@ public class ButtonAdapterItem extends SelectableAdapterItem<ButtonAdapterItem.V
 			super(itemView);
 
 			mButton = (Button) itemView.findViewById(R.id.button);
-		}
-
-
-		public void bind(boolean selected, String text) {
-			int color;
-
-			if (selected) {
-				color = itemView.getResources().getColor(R.color.background_selected);
-			} else {
-				color = itemView.getResources().getColor(R.color.background);
-			}
-
-			itemView.setBackgroundColor(color);
-			mButton.setText(text);
 		}
 	}
 }

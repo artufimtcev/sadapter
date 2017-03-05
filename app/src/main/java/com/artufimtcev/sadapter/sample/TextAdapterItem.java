@@ -20,7 +20,6 @@ public class TextAdapterItem extends SelectableAdapterItem<TextAdapterItem.ViewH
 
 	@Override
 	public void onBindViewHolder(ViewHolder holder) {
-		holder.bind(isSelected(), data);
 	}
 
 
@@ -49,21 +48,6 @@ public class TextAdapterItem extends SelectableAdapterItem<TextAdapterItem.ViewH
 			super(itemView);
 
 			mTextView = (TextView) itemView.findViewById(R.id.text);
-		}
-
-
-		public void bind(boolean selected, String text) {
-			int color;
-
-			if (selected) {
-				color = itemView.getResources().getColor(R.color.background_selected);
-			} else {
-				color = itemView.getResources().getColor(R.color.background);
-			}
-
-			itemView.setBackgroundColor(color);
-
-			mTextView.setText(text);
 		}
 	}
 }
