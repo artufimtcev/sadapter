@@ -1,1 +1,1 @@
-include ':app', ':lib', ':klib', ':klib'
+include ':app', ':lib'
