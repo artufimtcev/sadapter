@@ -1,3 +1,5 @@
 <resources>
 	<string name="app_name">SAdapter</string>
+	<string name="list_builder">List Builder</string>
+	<string name="lazyloading">Lazyloading</string>
 </resources>

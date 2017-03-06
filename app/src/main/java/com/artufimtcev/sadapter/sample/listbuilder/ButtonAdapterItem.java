@@ -1,4 +1,4 @@
-package com.artufimtcev.sadapter.sample;
+package com.artufimtcev.sadapter.sample.listbuilder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.artufimtcev.sadapter.AdapterItem;
+import com.artufimtcev.sadapter.sample.R;
 
 
 public class ButtonAdapterItem extends SelectableAdapterItem<ButtonAdapterItem.ViewHolder> {

@@ -1,4 +1,4 @@
-package com.artufimtcev.sadapter.sample;
+package com.artufimtcev.sadapter.sample.listbuilder;
 
 import android.support.v7.widget.RecyclerView;
 

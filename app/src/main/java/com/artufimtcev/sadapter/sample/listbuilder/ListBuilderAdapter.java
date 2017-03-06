@@ -1,19 +1,13 @@
-package com.artufimtcev.sadapter.sample;
+package com.artufimtcev.sadapter.sample.listbuilder;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
-import com.artufimtcev.sadapter.AdapterItem;
 import com.artufimtcev.sadapter.SAdapter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
+public class ListBuilderAdapter extends SAdapter<RecyclerView.ViewHolder> {
 
-public class SampleAdapter extends SAdapter<RecyclerView.ViewHolder> {
-
-	public SampleAdapter() {
+	public ListBuilderAdapter() {
 	}
 
 	public void addText(String text) {
