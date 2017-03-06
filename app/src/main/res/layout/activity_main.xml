@@ -15,7 +15,8 @@
 			android:onClick="onListBuilderClick"
 			android:padding="16dp"
 			android:text="@string/list_builder"
-			android:textColor="@android:color/black"/>
+			android:textColor="@android:color/black"
+			android:textSize="16dp"/>
 
 
 		<TextView
@@ -25,7 +26,8 @@
 			android:onClick="onLazyloadingClick"
 			android:padding="16dp"
 			android:text="@string/lazyloading"
-			android:textColor="@android:color/black"/>
+			android:textColor="@android:color/black"
+			android:textSize="16dp"/>
 	</LinearLayout>
 
 </layout>
