@@ -1,6 +1,8 @@
 package com.artufimtcev.sadapter.sample.listbuilder;
 
 import com.artufimtcev.sadapter.SAdapter;
+import com.artufimtcev.sadapter.sample.adapteritem.ButtonAdapterItem;
+import com.artufimtcev.sadapter.sample.adapteritem.TextAdapterItem;
 
 
 public class ListBuilderAdapter extends SAdapter {

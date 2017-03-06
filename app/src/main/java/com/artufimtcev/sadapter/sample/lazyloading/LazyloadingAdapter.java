@@ -1,7 +1,7 @@
 package com.artufimtcev.sadapter.sample.lazyloading;
 
 import com.artufimtcev.sadapter.SAdapter;
-import com.artufimtcev.sadapter.sample.ProgressItem;
+import com.artufimtcev.sadapter.sample.adapteritem.ProgressItem;
 
 
 public class LazyloadingAdapter extends SAdapter {

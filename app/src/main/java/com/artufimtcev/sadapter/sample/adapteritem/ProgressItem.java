@@ -1,4 +1,4 @@
-package com.artufimtcev.sadapter.sample;
+package com.artufimtcev.sadapter.sample.adapteritem;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.artufimtcev.sadapter.AdapterItem;
+import com.artufimtcev.sadapter.sample.R;
 
 
 public class ProgressItem extends AdapterItem<ProgressItem.ViewHolder> {

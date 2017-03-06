@@ -13,9 +13,9 @@ import android.support.v7.widget.RecyclerView;
 import com.artufimtcev.sadapter.AdapterItem;
 import com.artufimtcev.sadapter.sample.R;
 import com.artufimtcev.sadapter.sample.databinding.ActivityLazyloadingBinding;
-import com.artufimtcev.sadapter.sample.listbuilder.ButtonAdapterItem;
+import com.artufimtcev.sadapter.sample.adapteritem.ButtonAdapterItem;
 import com.artufimtcev.sadapter.sample.listbuilder.ImageViewItem;
-import com.artufimtcev.sadapter.sample.listbuilder.TextAdapterItem;
+import com.artufimtcev.sadapter.sample.adapteritem.TextAdapterItem;
 
 import java.util.ArrayList;
 import java.util.List;
