@@ -1,14 +1,13 @@
 package com.artufimtcev.sadapter.sample.listbuilder;
 
-import android.support.v7.widget.RecyclerView;
-
 import com.artufimtcev.sadapter.SAdapter;
 
 
-public class ListBuilderAdapter extends SAdapter<RecyclerView.ViewHolder> {
+public class ListBuilderAdapter extends SAdapter {
 
 	public ListBuilderAdapter() {
 	}
+
 
 	public void addText(String text) {
 		this.add(new TextAdapterItem(text));

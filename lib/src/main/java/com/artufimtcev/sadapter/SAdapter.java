@@ -2,6 +2,7 @@ package com.artufimtcev.sadapter;
 
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 import android.view.ViewGroup;
 
@@ -11,25 +12,18 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> implements Iterable<AdapterItem<? extends VH>> {
+public class SAdapter extends RecyclerView.Adapter implements Iterable<AdapterItem<? extends ViewHolder>> {
 
-	private final List<AdapterItem<? extends VH>> mItems = new ArrayList<>();
+	private final List<AdapterItem<? extends ViewHolder>> mItems = new ArrayList<>();
 	private final List<Class<? extends AdapterItem>> mViewTypes = new ArrayList<>();
 
 	// ----- Delegate adapter work to StrategyItems -----
 
 
 	@Override
-	public void onBindViewHolder(VH holder, int position) {
-		// Delegate binding of the ViewHolder to the corresponding AdapterItem
-		((AdapterItem<VH>) mItems.get(position)).onBindViewHolder(holder);
-	}
-
-
-	@Override
 	public int getItemViewType(int position) {
 		Class<? extends AdapterItem> viewTypeClass = mItems.get(position).getClass();
-		if (!mViewTypes.contains(viewTypeClass)) {
+		if(!mViewTypes.contains(viewTypeClass)) {
 			mViewTypes.add(viewTypeClass);
 		}
 
@@ -40,9 +34,9 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 
 
 	@Override
-	public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		// Use any of StrategyItems of this type to generate new ViewHolder
-		return (VH) findFirst(mViewTypes.get(viewType)).createViewHolder(parent);
+		return findFirst(mViewTypes.get(viewType)).createViewHolder(parent);
 	}
 
 
@@ -54,29 +48,36 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 
 	/**
 	 * Returns an iterator of all items in this adapter.
-	 * <P>
+	 * <p>
 	 * NOTE: Method returns a list iterator wrapped into a {@link ReadIterator}, meaning that calling remove() method
 	 * on the iterator will throw an {@link UnsupportedOperationException}.
 	 *
 	 * @return ReadIterator for this adapter.
 	 */
 	@Override
-	public Iterator<AdapterItem<? extends VH>> iterator() {
+	public Iterator<AdapterItem<? extends ViewHolder>> iterator() {
 		return new ReadIterator<>(mItems.iterator());
+	}
+
+
+	@Override
+	public void onBindViewHolder(ViewHolder holder, int position) {
+		// Delegate binding of the ViewHolder to the corresponding AdapterItem
+		((AdapterItem<? super ViewHolder>) mItems.get(position)).onBindViewHolder(holder);
 	}
 
 
 	// ----- Retrieving items -----
 
 
-	public AdapterItem<? extends VH> get(int index) {
+	public AdapterItem<? extends ViewHolder> get(int index) {
 		return mItems.get(index);
 	}
 
 
-	public <T extends AdapterItem<? extends VH>> T findFirst(Class<T> clazz) {
-		for (AdapterItem<? extends VH> strategyItem : mItems) {
-			if (strategyItem.getClass() == clazz) {
+	public <T extends AdapterItem<? extends ViewHolder>> T findFirst(Class<T> clazz) {
+		for(AdapterItem<? extends ViewHolder> strategyItem : mItems) {
+			if(strategyItem.getClass() == clazz) {
 				//noinspection unchecked
 				return (T) strategyItem;
 			}
@@ -86,11 +87,11 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	}
 
 
-	public <T extends AdapterItem<? extends VH>> List<T> findAll(Class<T> clazz) {
+	public <T extends AdapterItem<? extends ViewHolder>> List<T> findAll(Class<T> clazz) {
 		List<T> result = new ArrayList<>();
 
-		for (AdapterItem<? extends VH> strategyItem : mItems) {
-			if (strategyItem.getClass() == clazz) {
+		for(AdapterItem<? extends ViewHolder> strategyItem : mItems) {
+			if(strategyItem.getClass() == clazz) {
 				//noinspection unchecked
 				result.add((T) strategyItem);
 			}
@@ -103,19 +104,19 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	// ----- Adding items -----
 
 
-	public void add(AdapterItem<? extends VH> item) {
+	public void add(AdapterItem<? extends ViewHolder> item) {
 		mItems.add(item);
 		notifyItemInserted(mItems.size() - 1);
 	}
 
 
-	public void add(int index, AdapterItem<? extends VH> item) {
+	public void add(int index, AdapterItem<? extends ViewHolder> item) {
 		mItems.add(index, item);
 		notifyItemInserted(index);
 	}
 
 
-	public void addAll(Collection<? extends AdapterItem<? extends VH>> items) {
+	public void addAll(Collection<? extends AdapterItem<? extends ViewHolder>> items) {
 		int start = mItems.size();
 		mItems.addAll(items);
 		notifyItemRangeInserted(start, items.size());
@@ -125,9 +126,9 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	// ----- Removing items -----
 
 
-	public void remove(AdapterItem<? extends VH> item) {
+	public void remove(AdapterItem<? extends ViewHolder> item) {
 		int index = indexOf(item);
-		if (index < 0) return;
+		if(index < 0) return;
 		mItems.remove(item);
 		notifyItemRemoved(index);
 	}
@@ -140,14 +141,14 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 
 
 	public void removeType(Class<? extends AdapterItem> type) {
-		List<AdapterItem<? extends VH>> itemsListSnapshot = this.getItemsSnapshot();
+		List<AdapterItem<? extends ViewHolder>> itemsListSnapshot = this.getItemsSnapshot();
 		this.performRemoveType(type);
 		DiffUtil.calculateDiff(new AdapterItemCallback<>(itemsListSnapshot, mItems), false).dispatchUpdatesTo(this);
 	}
 
 
 	public void clear() {
-		if (mItems.isEmpty()) {
+		if(mItems.isEmpty()) {
 			return;
 		}
 
@@ -160,19 +161,19 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	// ----- Updating items -----
 
 
-	public void set(int index, AdapterItem<? extends VH> item) {
+	public void set(int index, AdapterItem<? extends ViewHolder> item) {
 		mItems.set(index, item);
 		notifyItemChanged(index);
 	}
 
 
-	public void update(AdapterItem<? extends VH> item) {
+	public void update(AdapterItem<? extends ViewHolder> item) {
 		updateType(item, item.getClass());
 	}
 
 
-	public void updateType(AdapterItem<? extends VH> item, Class<? extends AdapterItem> type) {
-		List<AdapterItem<? extends VH>> itemsListSnapshot = this.getItemsSnapshot();
+	public void updateType(AdapterItem<? extends ViewHolder> item, Class<? extends AdapterItem> type) {
+		List<AdapterItem<? extends ViewHolder>> itemsListSnapshot = this.getItemsSnapshot();
 
 		this.performRemoveType(type);
 		this.performAdd(item);
@@ -183,8 +184,8 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	}
 
 
-	public void updateType(List<? extends AdapterItem<? extends VH>> items, Class<? extends AdapterItem> type) {
-		List<AdapterItem<? extends VH>> itemsListSnapshot = this.getItemsSnapshot();
+	public void updateType(List<? extends AdapterItem<? extends ViewHolder>> items, Class<? extends AdapterItem> type) {
+		List<AdapterItem<? extends ViewHolder>> itemsListSnapshot = this.getItemsSnapshot();
 
 		this.performRemoveType(type);
 		this.performAdd(items);
@@ -195,9 +196,9 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	}
 
 
-	public void updateAll(List<AdapterItem<? extends VH>> items) {
+	public void updateAll(List<AdapterItem<? extends ViewHolder>> items) {
 		// Create items snapshot
-		List<AdapterItem<? extends VH>> oldListCopy = getItemsSnapshot();
+		List<AdapterItem<? extends ViewHolder>> oldListCopy = getItemsSnapshot();
 
 		mItems.clear();
 		mItems.addAll(items);
@@ -209,7 +210,7 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	// ----- Replace items -----
 
 
-	public void replaceAll(List<? extends AdapterItem<? extends VH>> items) {
+	public void replaceAll(List<? extends AdapterItem<? extends ViewHolder>> items) {
 		mItems.clear();
 		mItems.addAll(items);
 		notifyDataSetChanged();
@@ -219,14 +220,14 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	// ----- Calculating indices -----
 
 
-	public int indexOf(AdapterItem<? extends VH> item) {
+	public int indexOf(AdapterItem<? extends ViewHolder> item) {
 		return mItems.indexOf(item);
 	}
 
 
 	public int indexOf(Class<? extends AdapterItem> type) {
-		for (int i = 0; i < mItems.size(); i++) {
-			if (mItems.get(i).getClass() == type) return i;
+		for(int i = 0; i < mItems.size(); i++) {
+			if(mItems.get(i).getClass() == type) return i;
 		}
 
 		return -1;
@@ -238,17 +239,17 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 
 	public int getItemCountForType(Class<? extends AdapterItem> type) {
 		int count = 0;
-		for (int i = 0; i < getItemCount(); i++) {
-			if (get(i).getClass() == type) count ++;
+		for(int i = 0; i < getItemCount(); i++) {
+			if(get(i).getClass() == type) count++;
 		}
 		return count;
 	}
 
 
-	public <T extends AdapterItem<? extends VH>> List<T> getAllItemsForType(Class<T> type) {
+	public <T extends AdapterItem<? extends ViewHolder>> List<T> getAllItemsForType(Class<T> type) {
 		List<T> result = new ArrayList<>();
-		for (int i = 0; i < getItemCount(); i++) {
-			if (get(i).getClass() == type) {
+		for(int i = 0; i < getItemCount(); i++) {
+			if(get(i).getClass() == type) {
 				//noinspection unchecked
 				result.add((T) get(i));
 			}
@@ -263,8 +264,8 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 
 
 	private void performRemoveType(Class<? extends AdapterItem> type) {
-		for (int i = 0; i < mItems.size();) {
-			if (mItems.get(i).getClass() == type) {
+		for(int i = 0; i < mItems.size(); ) {
+			if(mItems.get(i).getClass() == type) {
 				mItems.remove(i);
 			} else {
 				i++;
@@ -273,18 +274,18 @@ public class SAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.A
 	}
 
 
-	private void performAdd(AdapterItem<? extends VH> item) {
+	private void performAdd(AdapterItem<? extends ViewHolder> item) {
 		mItems.add(item);
 	}
 
 
-	private void performAdd(List<? extends AdapterItem<? extends VH>> items) {
+	private void performAdd(List<? extends AdapterItem<? extends ViewHolder>> items) {
 		mItems.addAll(items);
 	}
 
 
-	private List<AdapterItem<? extends VH>> getItemsSnapshot() {
-		List<AdapterItem<? extends VH>> snapshot = new ArrayList<>();
+	private List<AdapterItem<? extends ViewHolder>> getItemsSnapshot() {
+		List<AdapterItem<? extends ViewHolder>> snapshot = new ArrayList<>();
 		snapshot.addAll(mItems);
 		return snapshot;
 	}
