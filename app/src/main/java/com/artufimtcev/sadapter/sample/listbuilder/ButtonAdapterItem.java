@@ -21,7 +21,9 @@ public class ButtonAdapterItem extends SelectableAdapterItem<ButtonAdapterItem.V
 
 
 	@Override
-	public void onBindViewHolder(ViewHolder holder) {}
+	public void onBindViewHolder(ViewHolder holder) {
+		holder.mButton.setText(data);
+	}
 
 
 	@Override

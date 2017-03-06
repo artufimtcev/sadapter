@@ -21,6 +21,7 @@ public class TextAdapterItem extends SelectableAdapterItem<TextAdapterItem.ViewH
 
 	@Override
 	public void onBindViewHolder(ViewHolder holder) {
+		holder.mTextView.setText(data);
 	}
 
 
@@ -50,5 +51,8 @@ public class TextAdapterItem extends SelectableAdapterItem<TextAdapterItem.ViewH
 
 			mTextView = (TextView) itemView.findViewById(R.id.text);
 		}
+
+
+
 	}
 }
