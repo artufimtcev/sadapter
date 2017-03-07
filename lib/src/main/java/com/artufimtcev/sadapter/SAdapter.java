@@ -203,7 +203,9 @@ public class SAdapter extends RecyclerView.Adapter implements Iterable<AdapterIt
 		mItems.clear();
 		mItems.addAll(items);
 
+		long start = System.currentTimeMillis();
 		DiffUtil.calculateDiff(new AdapterItemCallback<>(oldListCopy, mItems)).dispatchUpdatesTo(this);
+		Log.d("TEST", "Processing adapter items took " + (System.currentTimeMillis() - start) + " millis");
 	}
 
 
