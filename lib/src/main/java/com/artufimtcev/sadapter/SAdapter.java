@@ -66,6 +66,7 @@ public class SAdapter extends RecyclerView.Adapter implements Iterable<AdapterIt
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
 		// Delegate binding of the ViewHolder to the corresponding AdapterItem
+		//noinspection unchecked
 		((AdapterItem<? super ViewHolder>) mItems.get(position)).onBindViewHolder(holder);
 	}
 
