@@ -28,6 +28,17 @@
 			android:text="@string/lazyloading"
 			android:textColor="@android:color/black"
 			android:textSize="16dp"/>
+
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="?attr/selectableItemBackground"
+			android:onClick="onShuffleClick"
+			android:padding="16dp"
+			android:text="Shuffle"
+			android:textColor="@android:color/black"
+			android:textSize="16dp"/>
 	</LinearLayout>
 
 </layout>

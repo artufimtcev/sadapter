@@ -196,7 +196,7 @@ public class SAdapter extends RecyclerView.Adapter implements Iterable<AdapterIt
 	}
 
 
-	public void updateAll(List<AdapterItem<? extends ViewHolder>> items) {
+	public void updateAll(List<? extends AdapterItem<? extends ViewHolder>> items) {
 		// Create items snapshot
 		List<AdapterItem<? extends ViewHolder>> oldListCopy = getItemsSnapshot();
 

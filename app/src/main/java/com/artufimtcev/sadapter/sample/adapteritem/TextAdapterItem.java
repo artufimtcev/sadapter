@@ -51,8 +51,5 @@ public class TextAdapterItem extends SelectableAdapterItem<TextAdapterItem.ViewH
 
 			mTextView = (TextView) itemView.findViewById(R.id.text);
 		}
-
-
-
 	}
 }

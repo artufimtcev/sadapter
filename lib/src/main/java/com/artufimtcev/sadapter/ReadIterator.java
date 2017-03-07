@@ -1,6 +1,5 @@
 package com.artufimtcev.sadapter;
 
-
 import java.util.Iterator;
 
 

@@ -17,5 +17,6 @@
 
 		<activity android:name=".listbuilder.ListBuilderActivity"/>
 		<activity android:name=".lazyloading.LazyloadingActivity"/>
+		<activity android:name=".shuffle.ShuffleActivity"/>
 	</application>
 </manifest>

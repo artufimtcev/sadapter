@@ -9,6 +9,7 @@ import android.view.View;
 import com.artufimtcev.sadapter.sample.databinding.ActivityMainBinding;
 import com.artufimtcev.sadapter.sample.lazyloading.LazyloadingActivity;
 import com.artufimtcev.sadapter.sample.listbuilder.ListBuilderActivity;
+import com.artufimtcev.sadapter.sample.shuffle.ShuffleActivity;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -30,5 +31,10 @@ public class MainActivity extends AppCompatActivity{
 
 	public void onLazyloadingClick(View v) {
 		startActivity(LazyloadingActivity.newIntent(this));
+	}
+
+
+	public void onShuffleClick(View v) {
+		startActivity(ShuffleActivity.newIntent(this));
 	}
 }
