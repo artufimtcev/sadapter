@@ -14,6 +14,9 @@ import java.util.List;
 
 public class SAdapter extends RecyclerView.Adapter implements Iterable<AdapterItem<? extends ViewHolder>> {
 
+	private static final boolean LOGS = BuildConfig.DEBUG;
+
+
 	private final List<AdapterItem<? extends ViewHolder>> mItems = new ArrayList<>();
 	private final List<Class<? extends AdapterItem>> mViewTypes = new ArrayList<>();
 
@@ -180,7 +183,8 @@ public class SAdapter extends RecyclerView.Adapter implements Iterable<AdapterIt
 
 		long start = System.currentTimeMillis();
 		DiffUtil.calculateDiff(new AdapterItemCallback<>(itemsListSnapshot, mItems), false).dispatchUpdatesTo(this);
-		Log.d("TEST", "Processing adapter items took " + (System.currentTimeMillis() - start) + " millis");
+
+		if(LOGS) Log.d("TEST", "Processing adapter items with DiffUtil took " + (System.currentTimeMillis() - start) + " millis");
 	}
 
 
@@ -192,7 +196,8 @@ public class SAdapter extends RecyclerView.Adapter implements Iterable<AdapterIt
 
 		long start = System.currentTimeMillis();
 		DiffUtil.calculateDiff(new AdapterItemCallback<>(itemsListSnapshot, mItems), false).dispatchUpdatesTo(this);
-		Log.d("TEST", "Processing adapter items took " + (System.currentTimeMillis() - start) + " millis");
+
+		if(LOGS) Log.d("TEST", "Processing adapter items with DiffUtil took " + (System.currentTimeMillis() - start) + " millis");
 	}
 
 
@@ -205,7 +210,8 @@ public class SAdapter extends RecyclerView.Adapter implements Iterable<AdapterIt
 
 		long start = System.currentTimeMillis();
 		DiffUtil.calculateDiff(new AdapterItemCallback<>(oldListCopy, mItems)).dispatchUpdatesTo(this);
-		Log.d("TEST", "Processing adapter items took " + (System.currentTimeMillis() - start) + " millis");
+
+		if(LOGS) Log.d("TEST", "Processing adapter items with DiffUtil took " + (System.currentTimeMillis() - start) + " millis");
 	}
 
 
